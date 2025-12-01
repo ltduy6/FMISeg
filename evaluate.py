@@ -14,7 +14,7 @@ def get_parser():
     parser = argparse.ArgumentParser(
         description='Language-guide Medical Image Segmentation')
     parser.add_argument('--config',
-                        default='./config/training.yaml',
+                        default='./config/train.yaml',
                         type=str,
                         help='config file')
 
