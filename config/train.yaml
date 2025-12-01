@@ -28,11 +28,11 @@ DATA:
 
 #MosMedData+
 DATA:
-  # train_csv_path: ./data/MosMedData/prompt/Train_text_MosMedData.csv
-  # train_root_path: ./data/MosMedData/Train
+  train_csv_path: ./data/MosMedData/prompt/Train_text_MosMedData.csv
+  train_root_path: ./data/MosMedData/Train
 
-  # val_csv_path: ./data/MosMedData/prompt/Val_text_MosMedData.csv
-  # val_root_path: ./data/MosMedData/Val
+  val_csv_path: ./data/MosMedData/prompt/Val_text_MosMedData.csv
+  val_root_path: ./data/MosMedData/Val
 
-  # test_csv_path: ./data/MosMedData/prompt/Test_text_MosMedData.csv
-  # test_root_path: ./data/MosMedData/Test
+  test_csv_path: ./data/MosMedData/prompt/Test_text_MosMedData.csv
+  test_root_path: ./data/MosMedData/Test
