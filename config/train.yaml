@@ -11,8 +11,8 @@ TRAIN:
   model_save_filename: medseg
 
 MODEL:
-  bert_type: ./lib/BiomedVLP-CXR-BERT-specialized
-  vision_type: ./lib/convnext-tiny-224
+  bert_type: microsoft/BiomedVLP-CXR-BERT-specialized
+  vision_type: facebook/convnext-tiny-224
   project_dim: 768
 
 # QaTa-COV19
