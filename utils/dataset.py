@@ -18,7 +18,7 @@ class SegData(Dataset):
         self.root_path = root_path
         with open(csv_path, 'r') as f:
             self.data = pd.read_csv(f)
-        self.output_path = os.path.join(self.root_path, 'GTs')
+        self.output_path = os.path.join(self.root_path, 'Ground-truths')
         self.image_list = os.listdir(self.output_path)
         if dataname=="cov19":
             self.caption_list = {image: caption for image, caption in zip(self.data['Image'], self.data['Description'])} #qata
@@ -38,12 +38,12 @@ class SegData(Dataset):
         if self.dataname=="cov19": #QaTa-COV19
             image = os.path.join(self.root_path,'Images_H',self.image_list[idx].replace('mask_',''))#H
             image2 = os.path.join(self.root_path,'Images_L',self.image_list[idx].replace('mask_',''))#L
-            gt = os.path.join(self.root_path,'GTs', self.image_list[idx])
+            gt = os.path.join(self.root_path,'Ground-truths', self.image_list[idx])
         else:  #MosMedData
             image = os.path.join(self.root_path,'Images_H',self.image_list[idx])#H
             image2 = os.path.join(self.root_path,'Images_L',self.image_list[idx])#L
-            gt = os.path.join(self.root_path,'GTs', self.image_list[idx])
-        
+            gt = os.path.join(self.root_path,'Ground-truths', self.image_list[idx])
+
 
         caption = self.caption_list[self.image_list[idx]]
 
