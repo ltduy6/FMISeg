@@ -1,5 +1,5 @@
-    torch==1.13.0  
-    torchvision==0.13.1  
+    torch  
+    torchvision
     pytorch_lightning==1.9.0  
     torchmetrics==0.10.3  
     transformers==4.24.0  
