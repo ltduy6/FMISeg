@@ -23,8 +23,8 @@ class SegData(Dataset):
         if dataname=="cov19":
             self.caption_list = {image: caption for image, caption in zip(self.data['Image'], self.data['Description'])} #qata
         else:
-            self.caption_list = {image: caption for image, caption in zip(self.data['Image'], self.data['text'])} #mod
-        
+            self.caption_list = {image: caption for image, caption in zip(self.data['Image'], self.data['Description'])} #mod
+
         self.image_size = image_size
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer, trust_remote_code=True)
 
