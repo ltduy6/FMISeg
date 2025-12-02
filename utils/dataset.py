@@ -58,6 +58,10 @@ class SegData(Dataset):
         data = trans(data)
 
         image,image2,gt,token,mask = data['image'],data['image2'],data['gt'],data['token'],data['mask']
+        
+        if gt.shape[0] == 3:
+            gt = gt.mean(dim=0, keepdim=True)
+            
         gt = torch.where(gt==255,1,0)
         text = {'input_ids':token.squeeze(dim=0), 'attention_mask':mask.squeeze(dim=0)} 
 
