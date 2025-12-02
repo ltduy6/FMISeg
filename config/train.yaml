@@ -16,23 +16,23 @@ MODEL:
   project_dim: 768
 
 # QaTa-COV19
-# DATA:
-#   train_csv_path: ./data/QaTa-COV19-v2/prompt/train.csv
-#   train_root_path: ./data/QaTa-COV19-v2/Train
+DATA:
+  train_csv_path: ./data/QaTa-COV19-v2/prompt/train.csv
+  train_root_path: ./data/QaTa-COV19-v2/Train
 
-#   val_csv_path: ./data/QaTa-COV19-v2/prompt/val.csv
-#   val_root_path: ./data/QaTa-COV19-v2/Val
+  val_csv_path: ./data/QaTa-COV19-v2/prompt/val.csv
+  val_root_path: ./data/QaTa-COV19-v2/Val
 
-#   test_csv_path: ./data/QaTa-COV19-v2/prompt/test.csv
-#   test_root_path: ./data/QaTa-COV19-v2/Test
+  test_csv_path: ./data/QaTa-COV19-v2/prompt/test.csv
+  test_root_path: ./data/QaTa-COV19-v2/Test
 
 #MosMedData+
-DATA:
-  train_csv_path: ./data/MosMedData+/prompt/train.csv
-  train_root_path: ./data/MosMedData+/Train
+# DATA:
+#   train_csv_path: ./data/MosMedData+/prompt/train.csv
+#   train_root_path: ./data/MosMedData+/Train
 
-  val_csv_path: ./data/MosMedData+/prompt/val.csv
-  val_root_path: ./data/MosMedData+/Val
+#   val_csv_path: ./data/MosMedData+/prompt/val.csv
+#   val_root_path: ./data/MosMedData+/Val
 
-  test_csv_path: ./data/MosMedData+/prompt/test.csv
-  test_root_path: ./data/MosMedData+/Test
+#   test_csv_path: ./data/MosMedData+/prompt/test.csv
+#   test_root_path: ./data/MosMedData+/Test
