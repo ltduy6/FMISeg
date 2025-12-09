@@ -55,7 +55,7 @@ if __name__ == '__main__':
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     prototype = PSA(args).to(device)
     # Initialize model
-    model = CreateModel(args)
+    model = CreateModel(args, prototype)
     model_ckpt = ModelCheckpoint(
     dirpath=args.model_save_path,
     filename=args.model_save_filename,
