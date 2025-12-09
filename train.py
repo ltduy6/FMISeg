@@ -76,7 +76,10 @@ if __name__ == '__main__':
                         devices=args.devices,
                         callbacks=[model_ckpt,early_stopping],
                         enable_progress_bar=False,
-                        ) 
+                        )
+
+    prototype.fit(dl_train)
+
     print('====start====')
     trainer.fit(model,dl_train,dl_valid)
     print('====finish====')
