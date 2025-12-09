@@ -34,14 +34,14 @@ def get_parser():
 if __name__ == '__main__':
     args = get_parser()
     print("cuda is used:",torch.cuda.is_available())
-    ds_train = SegData(dataname="mod", #mod
+    ds_train = SegData(dataname="cov19", #mod
                     csv_path=args.train_csv_path,
                     root_path=args.train_root_path,
                     tokenizer=args.bert_type,
                     image_size=args.image_size,
                     mode='train')
 
-    ds_valid = SegData(dataname="mod",#mod
+    ds_valid = SegData(dataname="cov19",#mod
                     csv_path=args.val_csv_path,
                     root_path=args.val_root_path,
                     tokenizer=args.bert_type,
