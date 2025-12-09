@@ -1,11 +1,10 @@
 import torch
 import torch.nn as nn
 from einops import rearrange, repeat
-from net.decoder import Decoder
+from net.decoder import Decoder, GuidedApproximation
 from monai.networks.blocks.dynunet_block import UnetOutBlock
 from monai.networks.blocks.upsample import SubpixelUpsample
 from transformers import AutoTokenizer, AutoModel
-
 
 
 class BERTModel(nn.Module):
@@ -56,11 +55,12 @@ class FFBI(nn.Module):
 
 
 class SegModel(nn.Module):
-    def __init__(self, bert_type, vision_type, project_dim=512):
+    def __init__(self, bert_type, vision_type, project_dim=512, num_candidate=3, prototype=None):
         super(SegModel, self).__init__()
         self.encoder = VisionModel(vision_type, project_dim)
         self.encoder2 = VisionModel(vision_type, project_dim)
         self.text_encoder = BERTModel(bert_type, project_dim)
+        self.prototype = prototype
         self.spatial_dim = [7,14,28,56]   
         feature_dim = [768,384,192,96]
 
@@ -76,6 +76,9 @@ class SegModel(nn.Module):
         self.decoder1_2 = SubpixelUpsample(2,feature_dim[3],24,4)
         self.out_2 = UnetOutBlock(2, in_channels=24, out_channels=1)
         self.ffbi = FFBI(feature_dim[0],4,True)
+        self.approx1 = GuidedApproximation(project_dim, num_candidate, feature_dim[0], feature_dim[1])
+        self.approx2 = GuidedApproximation(project_dim, num_candidate, feature_dim[1], feature_dim[2])
+        self.approx3 = GuidedApproximation(project_dim, num_candidate, feature_dim[2], feature_dim[3])
     def forward(self, data):
 
         image2,image, text = data
@@ -99,15 +102,23 @@ class SegModel(nn.Module):
         os32_2 = image_features2[3]
 
         fu32,fu32_2=self.ffbi(os32,os32_2)
+        ref_image = self.prototype.query(image)
+        ref_image2 = self.prototype.query(image2)
 
-        os16 = self.decoder16(fu32,image_features[2], text_embeds[-1])
-        os16_2 = self.decoder16_2(fu32_2,image_features2[2], text_embeds[-1])
+        ref1 = self.approx1(ref_image, fu32, image_features[2])
+        ref1_2 = self.approx1(ref_image2, fu32_2, image_features2[2])
+        os16 = self.decoder16(fu32,image_features[2], ref1)
+        os16_2 = self.decoder16_2(fu32_2,image_features2[2], ref1_2)
         
-        os8 = self.decoder8(os16,image_features[1], text_embeds[-1])
-        os8_2 = self.decoder8_2(os16_2,image_features2[1], text_embeds[-1])
+        ref2 = self.approx2(ref_image, os16, image_features[1])
+        ref2_2 = self.approx2(ref_image2, os16_2, image_features2[1])
+        os8 = self.decoder8(os16,image_features[1], ref2)
+        os8_2 = self.decoder8_2(os16_2,image_features2[1], ref2_2)
 
-        os4 = self.decoder4(os8,image_features[0], text_embeds[-1])
-        os4_2 = self.decoder4_2(os8_2,image_features2[0], text_embeds[-1])
+        ref3 = self.approx3(ref_image, os8, image_features[0])
+        ref3_2 = self.approx3(ref_image2, os8_2, image_features2[0])
+        os4 = self.decoder4(os8,image_features[0], ref3)
+        os4_2 = self.decoder4_2(os8_2,image_features2[0], ref3_2)
         os4 = rearrange(os4, 'B (H W) C -> B C H W',H=self.spatial_dim[-1],W=self.spatial_dim[-1])
         os4_2 = rearrange(os4_2, 'B (H W) C -> B C H W',H=self.spatial_dim[-1],W=self.spatial_dim[-1])
         os1 = self.decoder1(os4)

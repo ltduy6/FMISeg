@@ -6,7 +6,8 @@ TRAIN:
   min_epochs: 20
   max_epochs: 200
   patience: 30
-  device: 1
+  devices: 1
+  device: cuda
   model_save_path: ./save_model
   model_save_filename: medseg
 
@@ -36,3 +37,17 @@ DATA:
 
   test_csv_path: ./data/MosMedData+/prompt/test.csv
   test_root_path: ./data/MosMedData+/Test
+
+PSA:
+  prototype_save_path: ./prototypes
+  prototype_save_filename: prototype
+  num_classes: 6
+  num_prototypes: 16
+  prototype_dim: 1024
+  num_candidate: 3
+  agg: attention
+
+CLIP:
+  bert_length: 256
+  clip_dim: 512
+  feature_dim: 768

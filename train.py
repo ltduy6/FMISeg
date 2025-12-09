@@ -14,6 +14,7 @@ import argparse
 import os
 import numpy as np
 import random
+from net.psa import PSA
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
@@ -50,6 +51,10 @@ if __name__ == '__main__':
     dl_train = DataLoader(ds_train, batch_size=args.train_batch_size, shuffle=True, num_workers=args.train_batch_size)
     dl_valid = DataLoader(ds_valid, batch_size=args.valid_batch_size, shuffle=False, num_workers=args.valid_batch_size)
 
+    # Initialize prototype semantic alignment module (PSA)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    prototype = PSA(args).to(device)
+    # Initialize model
     model = CreateModel(args)
     model_ckpt = ModelCheckpoint(
     dirpath=args.model_save_path,
@@ -68,7 +73,7 @@ if __name__ == '__main__':
     trainer = pl.Trainer(logger=True,
                         min_epochs=args.min_epochs,max_epochs=args.max_epochs,
                         accelerator='gpu', 
-                        devices=args.device,
+                        devices=args.devices,
                         callbacks=[model_ckpt,early_stopping],
                         enable_progress_bar=False,
                         ) 

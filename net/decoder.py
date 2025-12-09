@@ -113,4 +113,81 @@ class Decoder(nn.Module):
         output = rearrange(output,'B C H W -> B (H W) C')
         return output
 
+class SelfAttentionLayer(nn.Module):
+    """
+    Applies self-attention with positional encoding.
+    """
+    def __init__(self, in_channels: int, n_heads: int = 1):
+        super().__init__()
+        self.norm = nn.LayerNorm(in_channels)
+        self.vis_pos = PositionalEncoding(in_channels)
+        self.self_attn = nn.MultiheadAttention(embed_dim=in_channels, num_heads=n_heads, batch_first=True)
+        self.self_attn_norm = nn.LayerNorm(in_channels)
 
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = x + self.vis_pos(x)
+        y = self.norm(x)
+        y, _ = self.self_attn(y, y, y)
+        return x + self.self_attn_norm(y)
+
+class CrossAttentionLayer(nn.Module):
+    """
+    Implements cross-attention between image and text embeddings.
+    """
+    def __init__(self, in_channels: int, output_text_len: int, n_heads: int = 4):
+        super().__init__()
+        self.cross_attn = nn.MultiheadAttention(embed_dim=in_channels, num_heads=n_heads, batch_first=True)
+        self.vis_pos = PositionalEncoding(in_channels)
+        self.txt_pos = PositionalEncoding(in_channels)
+        self.norm = nn.LayerNorm(in_channels)
+        self.cross_attn_norm = nn.LayerNorm(in_channels)
+        self.scale = nn.Parameter(torch.tensor(1.0), requires_grad=True)
+
+    def forward(self, image: torch.Tensor, text: torch.Tensor) -> torch.Tensor:
+        image = image + self.vis_pos(image)
+        text = text + self.txt_pos(text)
+        image_norm = self.norm(image)
+        attn_output, _ = self.cross_attn(query=image_norm, key=text, value=text)
+        return image + self.scale * self.cross_attn_norm(attn_output)
+
+class AttentionApproximation(nn.Module):
+    """
+    Approximates visual features using attention-weighted text features.
+    """
+    def __init__(self, text_dim: int, num_candidates: int, vis_dim: int):
+        super().__init__()
+        self.projection = nn.Linear(vis_dim, text_dim)
+        self.self_attn = SelfAttentionLayer(text_dim)
+        self.cross_attn = CrossAttentionLayer(text_dim, num_candidates)
+
+    def forward(self, txt: torch.Tensor, img: torch.Tensor) -> torch.Tensor:
+        img = self.projection(img)
+        txt = self.self_attn(txt)
+        txt = self.cross_attn(txt, img)
+        return txt
+    
+class GuidedApproximation(nn.Module):
+    """
+    Refines prototype-text fusion via dual cross-attention and skip connections.
+    """
+    def __init__(self, text_dim: int, num_candidates: int, vis_dim: int, vis_skip_dim: int):
+        super().__init__()
+        self.projection1 = nn.Linear(vis_dim, text_dim)
+        self.projection2 = nn.Linear(vis_skip_dim, text_dim)
+
+        self.self_attn1 = SelfAttentionLayer(text_dim)
+        self.self_attn2 = SelfAttentionLayer(text_dim)
+
+        self.cross_attn1 = CrossAttentionLayer(text_dim, num_candidates)
+        self.cross_attn2 = CrossAttentionLayer(text_dim, num_candidates)
+
+        self.norm = nn.LayerNorm(text_dim)
+
+    def forward(self, txt: torch.Tensor, vis: torch.Tensor, vis_skip: torch.Tensor) -> torch.Tensor:
+        vis = self.projection1(vis)
+        vis_skip = self.projection2(vis_skip)
+
+        txt1 = self.cross_attn1(self.self_attn1(txt), vis)
+        txt2 = self.cross_attn2(self.self_attn2(txt), vis_skip)
+
+        return self.norm(txt + txt1 + txt2)
