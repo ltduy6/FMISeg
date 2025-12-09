@@ -12,7 +12,7 @@ from einops import rearrange
 
 # === Project Modules ===
 from .biomedclip import BiomedCLIP
-from .layers import AttentionApproximation
+from .decoder import AttentionApproximation
 
 
 class PSA(nn.Module):
