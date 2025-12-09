@@ -20,6 +20,7 @@ MODEL:
 
 # QaTa-COV19
 DATA:
+  dataset_name: QaTa
   train_csv_path: ./data/QaTa-COV19-v2/prompt/train.csv
   train_root_path: ./data/QaTa-COV19-v2/Train
 
