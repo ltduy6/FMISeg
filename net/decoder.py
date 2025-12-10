@@ -50,7 +50,7 @@ class FeedLinear(nn.Module):
         return x
 
 class LFFI(nn.Module):
-    def __init__(self, in_channels:int, output_text_len:int, input_text_len:int=24, embed_dim:int=768):
+    def __init__(self, in_channels:int, output_text_len:int, input_text_len:int=3, embed_dim:int=768):
         super(LFFI, self).__init__()
         self.in_channels = in_channels
         self.augment = SelfAugment(in_channels)
