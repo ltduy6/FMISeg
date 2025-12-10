@@ -16,6 +16,11 @@ MODEL:
   vision_type: facebook/convnext-tiny-224
   project_dim: 768
   text_dim: 512
+  
+CLIP:
+  bert_length: 256
+  clip_dim: 512
+  feature_dim: 768
 
 # QaTa-COV19
 DATA:
