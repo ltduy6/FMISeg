@@ -48,8 +48,8 @@ if __name__ == '__main__':
                     image_size=args.image_size,
                     mode='valid')
 
-    dl_train = DataLoader(ds_train, batch_size=args.train_batch_size, shuffle=True, num_workers=args.train_batch_size)
-    dl_valid = DataLoader(ds_valid, batch_size=args.valid_batch_size, shuffle=False, num_workers=args.valid_batch_size)
+    dl_train = DataLoader(ds_train, batch_size=args.train_batch_size, shuffle=True, num_workers=16)
+    dl_valid = DataLoader(ds_valid, batch_size=args.valid_batch_size, shuffle=False, num_workers=16)
 
     # Initialize prototype semantic alignment module (PSA)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
