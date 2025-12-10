@@ -14,6 +14,7 @@ import argparse
 import os
 import numpy as np
 import random
+from net.psa import PSA
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
@@ -33,14 +34,14 @@ def get_parser():
 if __name__ == '__main__':
     args = get_parser()
     print("cuda is used:",torch.cuda.is_available())
-    ds_train = SegData(dataname="mod", #mod
+    ds_train = SegData(dataname="cov19",
                     csv_path=args.train_csv_path,
                     root_path=args.train_root_path,
                     tokenizer=args.bert_type,
                     image_size=args.image_size,
                     mode='train')
 
-    ds_valid = SegData(dataname="mod",#mod
+    ds_valid = SegData(dataname="cov19",
                     csv_path=args.val_csv_path,
                     root_path=args.val_root_path,
                     tokenizer=args.bert_type,
@@ -49,6 +50,9 @@ if __name__ == '__main__':
 
     dl_train = DataLoader(ds_train, batch_size=args.train_batch_size, shuffle=True, num_workers=args.train_batch_size)
     dl_valid = DataLoader(ds_valid, batch_size=args.valid_batch_size, shuffle=False, num_workers=args.valid_batch_size)
+
+    # Initialize prototype semantic alignment module (PSA)
+    prototype = PSA(args).to("cuda")
 
     model = CreateModel(args)
     model_ckpt = ModelCheckpoint(
@@ -68,10 +72,12 @@ if __name__ == '__main__':
     trainer = pl.Trainer(logger=True,
                         min_epochs=args.min_epochs,max_epochs=args.max_epochs,
                         accelerator='gpu', 
-                        devices=args.device,
+                        devices=args.devices,
                         callbacks=[model_ckpt,early_stopping],
                         enable_progress_bar=False,
-                        ) 
+                        )
+    print('====prototype====')
+    prototype.fit(dl_train)
     print('====start====')
     trainer.fit(model,dl_train,dl_valid)
     print('====finish====')
