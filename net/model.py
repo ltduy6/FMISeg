@@ -5,7 +5,7 @@ from net.decoder import Decoder
 from monai.networks.blocks.dynunet_block import UnetOutBlock
 from monai.networks.blocks.upsample import SubpixelUpsample
 from transformers import AutoTokenizer, AutoModel
-
+from .layers import GuideDecoder, GuidedApproximation
 
 
 class BERTModel(nn.Module):
@@ -61,6 +61,7 @@ class SegModel(nn.Module):
         self.encoder = VisionModel(vision_type, project_dim)
         self.encoder2 = VisionModel(vision_type, project_dim)
         self.text_encoder = BERTModel(bert_type, project_dim)
+        self.prototype = prototype
         self.spatial_dim = [7,14,28,56]   
         feature_dim = [768,384,192,96]
 
@@ -76,6 +77,10 @@ class SegModel(nn.Module):
         self.decoder1_2 = SubpixelUpsample(2,feature_dim[3],24,4)
         self.out_2 = UnetOutBlock(2, in_channels=24, out_channels=1)
         self.ffbi = FFBI(feature_dim[0],4,True)
+        self.approx1 = GuidedApproximation(512, 3, feature_dim[0], feature_dim[1])
+        self.approx2 = GuidedApproximation(512, 3, feature_dim[1], feature_dim[2])
+        self.approx3 = GuidedApproximation(512, 3, feature_dim[2], feature_dim[3])
+
     def forward(self, data):
 
         image2,image, text = data
