@@ -65,21 +65,21 @@ class SegModel(nn.Module):
         self.spatial_dim = [7,14,28,56]   
         feature_dim = [768,384,192,96]
 
-        self.decoder16 = Decoder(feature_dim[0],feature_dim[1],self.spatial_dim[0],24)
-        self.decoder8 = Decoder(feature_dim[1],feature_dim[2],self.spatial_dim[1],12)
-        self.decoder4 = Decoder(feature_dim[2],feature_dim[3],self.spatial_dim[2],9)
+        self.decoder16 = Decoder(feature_dim[0],feature_dim[1],self.spatial_dim[0],3)
+        self.decoder8 = Decoder(feature_dim[1],feature_dim[2],self.spatial_dim[1],3)
+        self.decoder4 = Decoder(feature_dim[2],feature_dim[3],self.spatial_dim[2],3)
         self.decoder1 = SubpixelUpsample(2,feature_dim[3],24,4)
         self.out = UnetOutBlock(2, in_channels=24, out_channels=1)
 
-        self.decoder16_2 = Decoder(feature_dim[0],feature_dim[1],self.spatial_dim[0],24)
-        self.decoder8_2 = Decoder(feature_dim[1],feature_dim[2],self.spatial_dim[1],12)
-        self.decoder4_2 = Decoder(feature_dim[2],feature_dim[3],self.spatial_dim[2],9)
+        self.decoder16_2 = Decoder(feature_dim[0],feature_dim[1],self.spatial_dim[0],3)
+        self.decoder8_2 = Decoder(feature_dim[1],feature_dim[2],self.spatial_dim[1],3)
+        self.decoder4_2 = Decoder(feature_dim[2],feature_dim[3],self.spatial_dim[2],3)
         self.decoder1_2 = SubpixelUpsample(2,feature_dim[3],24,4)
         self.out_2 = UnetOutBlock(2, in_channels=24, out_channels=1)
         self.ffbi = FFBI(feature_dim[0],4,True)
-        self.approx1 = GuidedApproximation(512, 24, feature_dim[0], feature_dim[1])
-        self.approx2 = GuidedApproximation(512, 12, feature_dim[1], feature_dim[2])
-        self.approx3 = GuidedApproximation(512, 9, feature_dim[2], feature_dim[3])
+        self.approx1 = GuidedApproximation(512, 3, feature_dim[0], feature_dim[1])
+        self.approx2 = GuidedApproximation(512, 3, feature_dim[1], feature_dim[2])
+        self.approx3 = GuidedApproximation(512, 3, feature_dim[2], feature_dim[3])
 
     def forward(self, data):
 
