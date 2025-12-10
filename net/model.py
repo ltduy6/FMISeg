@@ -77,9 +77,9 @@ class SegModel(nn.Module):
         self.decoder1_2 = SubpixelUpsample(2,feature_dim[3],24,4)
         self.out_2 = UnetOutBlock(2, in_channels=24, out_channels=1)
         self.ffbi = FFBI(feature_dim[0],4,True)
-        self.approx1 = GuidedApproximation(512, 3, feature_dim[0], feature_dim[1], 24)
-        self.approx2 = GuidedApproximation(512, 3, feature_dim[1], feature_dim[2], 12)
-        self.approx3 = GuidedApproximation(512, 3, feature_dim[2], feature_dim[3], 9)
+        self.approx1 = GuidedApproximation(512, 24, feature_dim[0], feature_dim[1])
+        self.approx2 = GuidedApproximation(512, 12, feature_dim[1], feature_dim[2])
+        self.approx3 = GuidedApproximation(512, 9, feature_dim[2], feature_dim[3])
 
     def forward(self, data):
 
