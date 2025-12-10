@@ -14,9 +14,9 @@ TRAIN:
 MODEL:
   bert_type: microsoft/BiomedVLP-CXR-BERT-specialized
   vision_type: facebook/convnext-tiny-224
-  project_dim: 512
+  project_dim: 768
   text_len: 256
-  text_dim: 512
+  text_dim: 768
 
 # QaTa-COV19
 DATA:
@@ -52,5 +52,5 @@ PSA:
 
 CLIP:
   bert_length: 256
-  clip_dim: 512
+  clip_dim: 768
   feature_dim: 768

@@ -36,7 +36,7 @@ class BiomedCLIP(nn.Module):
         )
 
         # Projection + Classification Head for Image-Text Matching
-        feature_dim = 512
+        feature_dim = 768
         self.itm_head = nn.Sequential(
             nn.Linear(2 * feature_dim, feature_dim),
             nn.ReLU(),
