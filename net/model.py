@@ -104,9 +104,13 @@ class SegModel(nn.Module):
         os32_2 = image_features2[3]
 
         fu32,fu32_2=self.ffbi(os32,os32_2)
+        ref0 = self.prototype.query(image)
+        ref0_2 = self.prototype.query(image2)
 
-        os16 = self.decoder16(fu32,image_features[2], text_embeds[-1])
-        os16_2 = self.decoder16_2(fu32_2,image_features2[2], text_embeds[-1])
+        ref1 = self.approx1(ref0, fu32, image_features[2])
+        ref1_2 = self.approx1(ref0_2, fu32_2, image_features2[2])
+        os16 = self.decoder16(fu32,image_features[2], ref1)
+        os16_2 = self.decoder16_2(fu32_2,image_features2[2], ref1_2)
         
         os8 = self.decoder8(os16,image_features[1], text_embeds[-1])
         os8_2 = self.decoder8_2(os16_2,image_features2[1], text_embeds[-1])
