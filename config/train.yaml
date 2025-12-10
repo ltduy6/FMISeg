@@ -14,7 +14,7 @@ TRAIN:
 MODEL:
   bert_type: microsoft/BiomedVLP-CXR-BERT-specialized
   vision_type: facebook/convnext-tiny-224
-  project_dim: 768
+  project_dim: 512
   text_len: 256
   text_dim: 512
 
