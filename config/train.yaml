@@ -15,6 +15,7 @@ MODEL:
   bert_type: microsoft/BiomedVLP-CXR-BERT-specialized
   vision_type: facebook/convnext-tiny-224
   project_dim: 768
+  text_dim: 512
 
 # QaTa-COV19
 DATA:
