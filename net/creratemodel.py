@@ -15,7 +15,6 @@ class CreateModel(pl.LightningModule):
     def __init__(self, args, psa=None):
         super(CreateModel, self).__init__()
 
-        self.save_hyperparameters(ignore=['psa'])
         self.model = SegModel(args.bert_type, args.vision_type, args.project_dim)
         self.lr = args.lr
         self.history = {}
@@ -26,7 +25,7 @@ class CreateModel(pl.LightningModule):
         self.train_metrics = nn.ModuleDict(metrics_dict)
         self.val_metrics = deepcopy(self.train_metrics)
         self.test_metrics = deepcopy(self.train_metrics)
-        self.save_hyperparameters()
+        self.save_hyperparameters(ignore=['psa'])
 
     def configure_optimizers(self):
         # optimizer = torch.optim.AdamW(self.model.parameters(),lr = self.hparams.lr)
