@@ -54,7 +54,7 @@ if __name__ == '__main__':
     # Initialize prototype semantic alignment module (PSA)
     prototype = PSA(args).to("cuda")
 
-    model = CreateModel(args)
+    model = CreateModel(args, prototype)
     model_ckpt = ModelCheckpoint(
     dirpath=args.model_save_path,
     filename=args.model_save_filename,

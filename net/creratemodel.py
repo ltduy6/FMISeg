@@ -12,9 +12,9 @@ import numpy as np
 import datetime
 
 class CreateModel(pl.LightningModule):
-    def __init__(self, args):
+    def __init__(self, args, prototype=None):
         super(CreateModel, self).__init__()
-        self.model = SegModel(args.bert_type, args.vision_type, args.project_dim)
+        self.model = SegModel(args.bert_type, args.vision_type, args.project_dim, prototype)
         self.lr = args.lr
         self.history = {}
         
