@@ -79,6 +79,20 @@ if __name__ == '__main__':
                         )
 
     prototype.fit(dl_train)
+    print('====PSA fit completed====')
+
+    # Test first batch processing
+    print('====Testing first batch====')
+    try:
+        batch = next(iter(dl_train))
+        print(f"Batch loaded successfully. Batch size: {len(batch[0][0])}")
+        
+        model.eval()
+        with torch.no_grad():
+            output = model(batch[0])
+        print("Forward pass successful")
+    except Exception as e:
+        print(f"Error in first batch: {e}")
 
     print('====start====')
     trainer.fit(model,dl_train,dl_valid)
