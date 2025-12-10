@@ -5,4 +5,5 @@
     transformers
     monai==1.0.1  
     pandas  
-    einops  
+    einops
+    open-clip-torch==2.32.0  
