@@ -165,7 +165,7 @@ class GuidedApproximation(nn.Module):
     """
     Refines prototype-text fusion via dual cross-attention and skip connections.
     """
-    def __init__(self, text_dim: int, num_candidates: int, vis_dim: int, vis_skip_dim: int):
+    def __init__(self, text_dim: int, num_candidates: int, vis_dim: int, vis_skip_dim: int, output_dim: int = None):
         super().__init__()
         self.projection1 = nn.Linear(vis_dim, text_dim)
         self.projection2 = nn.Linear(vis_skip_dim, text_dim)
@@ -178,6 +178,11 @@ class GuidedApproximation(nn.Module):
 
         self.norm = nn.LayerNorm(text_dim)
 
+        if output_dim is not None:
+            self.output_proj = nn.Linear(text_dim, output_dim)
+        else:
+            self.output_proj = None
+
     def forward(self, txt: torch.Tensor, vis: torch.Tensor, vis_skip: torch.Tensor) -> torch.Tensor:
         vis = self.projection1(vis)
         vis_skip = self.projection2(vis_skip)
@@ -185,4 +190,7 @@ class GuidedApproximation(nn.Module):
         txt1 = self.cross_attn1(self.self_attn1(txt), vis)
         txt2 = self.cross_attn2(self.self_attn2(txt), vis_skip)
 
-        return self.norm(txt + txt1 + txt2)
+        output = self.norm(txt + txt1 + txt2)
+        if self.output_proj is not None:
+            output = self.output_proj(output)
+        return output
