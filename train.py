@@ -52,9 +52,9 @@ if __name__ == '__main__':
     dl_valid = DataLoader(ds_valid, batch_size=args.valid_batch_size, shuffle=False, num_workers=4)
 
     # Initialize prototype semantic alignment module (PSA)
-    prototype = PSA(args).to("cuda")
+    prototype = PSA(args)
 
-    model = CreateModel(args, prototype=prototype).to("cuda")
+    model = CreateModel(args, prototype=prototype)
     model_ckpt = ModelCheckpoint(
     dirpath=args.model_save_path,
     filename=args.model_save_filename,
