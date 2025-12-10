@@ -61,7 +61,6 @@ class SegModel(nn.Module):
         self.encoder = VisionModel(vision_type, project_dim)
         self.encoder2 = VisionModel(vision_type, project_dim)
         self.text_encoder = BERTModel(bert_type, project_dim)
-        self.prototype = prototype
         self.spatial_dim = [7,14,28,56]   
         feature_dim = [768,384,192,96]
 
