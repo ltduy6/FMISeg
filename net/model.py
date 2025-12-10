@@ -95,6 +95,8 @@ class SegModel(nn.Module):
         text_output = self.text_encoder(text['input_ids'],text['attention_mask'])
         text_embeds, _ = text_output['feature'],text_output['project']
 
+        print("Txt shape:", text_embeds[-1].shape)
+
         if len(image_features[0].shape) == 4: 
             image_features = image_features[1:]  
             image_features = [rearrange(item,'b c h w -> b (h w) c') for item in image_features] 
