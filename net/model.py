@@ -59,7 +59,7 @@ class SegModel(nn.Module):
         super(SegModel, self).__init__()
         self.encoder = VisionModel(vision_type, project_dim)
         self.encoder2 = VisionModel(vision_type, project_dim)
-        self.text_encoder = BERTModel(bert_type, project_dim)
+        # self.text_encoder = BERTModel(bert_type, project_dim)
         self.prototype = prototype
         self.spatial_dim = [7,14,28,56]   
         feature_dim = [768,384,192,96]
@@ -90,8 +90,8 @@ class SegModel(nn.Module):
         image_output2 = self.encoder2(image2)
         image_features, _ = image_output['feature'], image_output['project']
         image_features2, _ = image_output2['feature'], image_output2['project']
-        text_output = self.text_encoder(text['input_ids'],text['attention_mask'])
-        text_embeds, _ = text_output['feature'],text_output['project']
+        # text_output = self.text_encoder(text['input_ids'],text['attention_mask'])
+        # text_embeds, _ = text_output['feature'],text_output['project']
 
         if len(image_features[0].shape) == 4: 
             image_features = image_features[1:]  
@@ -101,9 +101,9 @@ class SegModel(nn.Module):
         os32 = image_features[3]
         os32_2 = image_features2[3]
 
-        fu32,fu32_2=self.ffbi(os32,os32_2)
-        ref_image = self.prototype.query(image)
-        ref_image2 = self.prototype.query(image2)
+        fu32,fu32_2 = self.ffbi(os32,os32_2)
+        ref_image = self.prototype.query(image, image_output)
+        ref_image2 = self.prototype.query(image2, image_output2)
 
         ref1 = self.approx1(ref_image, fu32, image_features[2])
         ref1_2 = self.approx1(ref_image2, fu32_2, image_features2[2])
