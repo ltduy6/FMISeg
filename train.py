@@ -75,7 +75,7 @@ if __name__ == '__main__':
                         accelerator='gpu', 
                         devices=args.devices,
                         callbacks=[model_ckpt,early_stopping],
-                        enable_progress_bar=False,
+                        enable_progress_bar=True,
                         )
 
     prototype.fit(dl_train)
