@@ -92,10 +92,8 @@ class SegModel(nn.Module):
         image_output2 = self.encoder2(image2)
         image_features, _ = image_output['feature'], image_output['project']
         image_features2, _ = image_output2['feature'], image_output2['project']
-        text_output = self.text_encoder(text['input_ids'],text['attention_mask'])
-        text_embeds, _ = text_output['feature'],text_output['project']
-
-        print("Txt shape:", text_embeds[-1].shape)
+        # text_output = self.text_encoder(text['input_ids'],text['attention_mask'])
+        # text_embeds, _ = text_output['feature'],text_output['project']
 
         if len(image_features[0].shape) == 4: 
             image_features = image_features[1:]  
@@ -113,12 +111,16 @@ class SegModel(nn.Module):
         ref1_2 = self.approx1(ref0_2, fu32_2, image_features2[2])
         os16 = self.decoder16(fu32,image_features[2], ref1)
         os16_2 = self.decoder16_2(fu32_2,image_features2[2], ref1_2)
-        
-        os8 = self.decoder8(os16,image_features[1], text_embeds[-1])
-        os8_2 = self.decoder8_2(os16_2,image_features2[1], text_embeds[-1])
 
-        os4 = self.decoder4(os8,image_features[0], text_embeds[-1])
-        os4_2 = self.decoder4_2(os8_2,image_features2[0], text_embeds[-1])
+        ref2 = self.approx2(ref0, os16, image_features[1])
+        ref2_2 = self.approx2(ref0_2, os16_2, image_features2[1])
+        os8 = self.decoder8(os16,image_features[1], ref2)
+        os8_2 = self.decoder8_2(os16_2,image_features2[1], ref2_2)
+
+        ref3 = self.approx3(ref0, os8, image_features[0])
+        ref3_2 = self.approx3(ref0_2, os8_2, image_features2[0])
+        os4 = self.decoder4(os8,image_features[0], ref3)
+        os4_2 = self.decoder4_2(os8_2,image_features2[0], ref3_2)
         os4 = rearrange(os4, 'B (H W) C -> B C H W',H=self.spatial_dim[-1],W=self.spatial_dim[-1])
         os4_2 = rearrange(os4_2, 'B (H W) C -> B C H W',H=self.spatial_dim[-1],W=self.spatial_dim[-1])
         os1 = self.decoder1(os4)
