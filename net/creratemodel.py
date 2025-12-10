@@ -14,7 +14,7 @@ import datetime
 class CreateModel(pl.LightningModule):
     def __init__(self, args, prototype=None):
         super(CreateModel, self).__init__()
-        self.model = SegModel(args.bert_type, args.vision_type, args.project_dim, prototype)
+        self.model = SegModel(args.bert_type, args.vision_type, args.project_dim)
         self.lr = args.lr
         self.history = {}
         
