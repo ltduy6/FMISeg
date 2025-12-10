@@ -105,9 +105,6 @@ class Decoder(nn.Module):
         self.decoder = UnetrUpBlock(2,in_channels,out_channels,3,2,norm_name='BATCH')
 
     def forward(self, vis, skip_vis, txt):
-        print("Shape vision:", vis.shape)
-        print("Shape skip vision:", skip_vis.shape)
-        print("Shape text:", txt.shape if txt is not None else None)
         if txt is not None:
             vis =  self.lffi_layer(vis, txt)
         vis = rearrange(vis,'B (H W) C -> B C H W',H=self.spatial_size,W=self.spatial_size)
