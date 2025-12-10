@@ -102,8 +102,8 @@ class SegModel(nn.Module):
         os32_2 = image_features2[3]
 
         fu32,fu32_2 = self.ffbi(os32,os32_2)
-        ref_image = self.prototype.query(image, image_output)
-        ref_image2 = self.prototype.query(image2, image_output2)
+        ref_image = self.prototype.query(image)
+        ref_image2 = self.prototype.query(image2)
 
         ref1 = self.approx1(ref_image, fu32, image_features[2])
         ref1_2 = self.approx1(ref_image2, fu32_2, image_features2[2])
