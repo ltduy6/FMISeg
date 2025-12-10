@@ -14,6 +14,8 @@ import datetime
 class CreateModel(pl.LightningModule):
     def __init__(self, args, psa=None):
         super(CreateModel, self).__init__()
+
+        self.save_hyperparameters(ignore=['psa'])
         self.model = SegModel(args.bert_type, args.vision_type, args.project_dim)
         self.lr = args.lr
         self.history = {}
