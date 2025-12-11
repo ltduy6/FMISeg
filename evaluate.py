@@ -7,8 +7,9 @@ import pytorch_lightning as pl
 from utils.dataset import SegData
 import utils.config as config
 import os
+from net.psa import PSA
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 def get_parser():
     parser = argparse.ArgumentParser(
@@ -26,17 +27,19 @@ def get_parser():
 if __name__ == '__main__':
     args = get_parser()
     # load model
-    model = CreateModel(args)
+    prototype = PSA(args).to("cuda")
+    prototype.load()
+    model = CreateModel(args, prototype=prototype).to("cuda")
     checkpoint = torch.load('./save_model/medseg.ckpt',map_location='cpu',weights_only=False)["state_dict"]
     model.load_state_dict(checkpoint,strict=True)
     # dataloader
-    ds_test = SegData(dataname="mod",#mod
+    ds_test = SegData(dataname="cov19",
                     csv_path=args.test_csv_path,
                     root_path=args.test_root_path,
                     tokenizer=args.bert_type,
                     image_size=args.image_size,
                     mode='test')
     dl_test = DataLoader(ds_test, batch_size=args.valid_batch_size, shuffle=False, num_workers=8)
-    trainer = pl.Trainer(accelerator='gpu',devices=1) 
+    trainer = pl.Trainer(accelerator='gpu') 
     model.eval()
     trainer.test(model, dl_test) 

@@ -1,1 +1,6 @@
 /data/
+/lightning_logs/
+/logs/
+/save_model/
+train.slurm
+*/__pycache__
