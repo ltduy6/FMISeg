@@ -82,6 +82,26 @@ class PSA(nn.Module):
 
         self.save()
         self.load()
+    
+    def freeze(self):
+        for param in self.parameters():
+            param.requires_grad = False
+        
+        for param in self.encoder.parameters():
+            param.requires_grad = False
+        
+        for param in self.approx.parameters():
+            param.requires_grad = False
+    
+    def unfreeze(self):
+        for param in self.parameters():
+            param.requires_grad = True
+        
+        for param in self.encoder.parameters():
+            param.requires_grad = True
+        
+        for param in self.approx.parameters():
+            param.requires_grad = True
 
     def save(self):
         """
