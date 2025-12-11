@@ -53,7 +53,6 @@ if __name__ == '__main__':
 
     # Initialize prototype semantic alignment module (PSA)
     prototype = PSA(args)
-    prototype.freeze()
 
     model = CreateModel(args, prototype=prototype)
     model_ckpt = ModelCheckpoint(
