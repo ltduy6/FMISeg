@@ -83,15 +83,18 @@ class SegModel(nn.Module):
 
     def forward(self, data):
 
-        image2,image, text = data
+        image2,image,imageRaw, text = data
         if image.shape[1] == 1:   
             image = repeat(image,'b 1 h w -> b c h w',c=3)
             image2 = repeat(image2,'b 1 h w -> b c h w',c=3)
+            imageRaw = repeat(imageRaw,'b 1 h w -> b c h w',c=3)
 
         image_output = self.encoder(image)
         image_output2 = self.encoder2(image2)
+        imageRaw_output = self.encoder(imageRaw)
         image_features, _ = image_output['feature'], image_output['project']
         image_features2, _ = image_output2['feature'], image_output2['project']
+        imageRaw_features, _ = imageRaw_output['feature'], imageRaw_output['project']
         # text_output = self.text_encoder(text['input_ids'],text['attention_mask'])
         # text_embeds, _ = text_output['feature'],text_output['project']
 
@@ -100,25 +103,27 @@ class SegModel(nn.Module):
             image_features = [rearrange(item,'b c h w -> b (h w) c') for item in image_features] 
             image_features2 = image_features2[1:]  
             image_features2 = [rearrange(item,'b c h w -> b (h w) c') for item in image_features2]
+            imageRaw_features = imageRaw_features[1:]
+            imageRaw_features = [rearrange(item,'b c h w -> b (h w) c') for item in imageRaw_features]
+
         os32 = image_features[3]
         os32_2 = image_features2[3]
 
         fu32,fu32_2=self.ffbi(os32,os32_2)
-        ref0 = self.prototype.query(image)
-        ref0_2 = self.prototype.query(image2)
+        ref0 = self.prototype.query(imageRaw)
 
         ref1 = self.approx1(ref0, fu32, image_features[2])
-        ref1_2 = self.approx1(ref0_2, fu32_2, image_features2[2])
+        ref1_2 = self.approx1(ref0, fu32_2, image_features2[2])
         os16 = self.decoder16(fu32,image_features[2], ref1)
         os16_2 = self.decoder16_2(fu32_2,image_features2[2], ref1_2)
 
         ref2 = self.approx2(ref0, os16, image_features[1])
-        ref2_2 = self.approx2(ref0_2, os16_2, image_features2[1])
+        ref2_2 = self.approx2(ref0, os16_2, image_features2[1])
         os8 = self.decoder8(os16,image_features[1], ref2)
         os8_2 = self.decoder8_2(os16_2,image_features2[1], ref2_2)
 
         ref3 = self.approx3(ref0, os8, image_features[0])
-        ref3_2 = self.approx3(ref0_2, os8_2, image_features2[0])
+        ref3_2 = self.approx3(ref0, os8_2, image_features2[0])
         os4 = self.decoder4(os8,image_features[0], ref3)
         os4_2 = self.decoder4_2(os8_2,image_features2[0], ref3_2)
         os4 = rearrange(os4, 'B (H W) C -> B C H W',H=self.spatial_dim[-1],W=self.spatial_dim[-1])

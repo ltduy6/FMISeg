@@ -30,7 +30,7 @@ if __name__ == '__main__':
     prototype = PSA(args).to("cuda")
     prototype.load()
     model = CreateModel(args, prototype=prototype).to("cuda")
-    checkpoint = torch.load('./save_model/medseg.ckpt',map_location='cpu',weights_only=False)["state_dict"]
+    checkpoint = torch.load('./save_model/medseg-v1.ckpt',map_location='cpu',weights_only=False)["state_dict"]
     model.load_state_dict(checkpoint,strict=True)
     # dataloader
     ds_test = SegData(dataname="cov19",
