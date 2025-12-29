@@ -4,7 +4,7 @@ TRAIN:
   valid_batch_size: 8
   image_size: [224,224]
   min_epochs: 20
-  max_epochs: 200
+  max_epochs: 100
   patience: 30
   device: cuda
   devices: 1

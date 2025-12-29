@@ -16,7 +16,7 @@ import numpy as np
 import random
 from net.psa import PSA
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 def get_parser():
     parser = argparse.ArgumentParser(
@@ -53,7 +53,6 @@ if __name__ == '__main__':
 
     # Initialize prototype semantic alignment module (PSA)
     prototype = PSA(args)
-    prototype.freeze()
 
     model = CreateModel(args, prototype=prototype)
     model_ckpt = ModelCheckpoint(
@@ -73,7 +72,6 @@ if __name__ == '__main__':
     trainer = pl.Trainer(logger=True,
                         min_epochs=args.min_epochs,max_epochs=args.max_epochs,
                         accelerator='gpu', 
-                        devices=args.devices,
                         callbacks=[model_ckpt,early_stopping],
                         enable_progress_bar=False,
                         )
