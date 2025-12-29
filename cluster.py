@@ -37,6 +37,27 @@ def cluster_prompts(prompts, url="microsoft/BiomedVLP-CXR-BERT-specialized", num
     # Create prototype matrix
     prototype_centers = torch.from_numpy(kmeans.cluster_centers_).float()  # Shape: [num_prototypes, embedding_dim]
     
+    # Analyze cluster distribution and print texts in each cluster
+    unique, counts = np.unique(cluster_labels, return_counts=True)
+    print("\n" + "="*80)
+    print("CLUSTER ANALYSIS")
+    print("="*80)
+    
+    for cluster_id, count in zip(unique, counts):
+        print(f"\n--- CLUSTER {cluster_id} ({count} samples) ---")
+        
+        # Get indices of samples in this cluster
+        cluster_indices = np.where(cluster_labels == cluster_id)[0]
+        
+        # Print first 10 texts in this cluster (or all if less than 10)
+        max_display = min(10, len(cluster_indices))
+        for i, idx in enumerate(cluster_indices[:max_display]):
+            print(f"  {i+1:2d}. {prompts[idx]}")
+        
+        if len(cluster_indices) > max_display:
+            print(f"  ... and {len(cluster_indices) - max_display} more samples")
+        print()
+        
     # Create prototype space dictionary
     prototype_space = {
         'prototypes': prototype_centers,
@@ -147,8 +168,4 @@ if __name__ == "__main__":
     prompts = [prompt.split(',')[-1].strip() for prompt in prompts]
     
     # Create prototype space
-    prototype_space = cluster_prompts(prompts, num_prototypes=16)
-    
-    # Or optimize number of prototypes
-    results, best_k = optimize_num_prototypes(prompts)
-    print(f"Optimal number of prototypes: {best_k}")
+    prototype_space = cluster_prompts(prompts, num_prototypes=22)
