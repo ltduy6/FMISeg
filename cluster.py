@@ -39,6 +39,7 @@ def cluster_prompts(prompts, url="microsoft/BiomedVLP-CXR-BERT-specialized", num
     
     # Analyze cluster distribution and print texts in each cluster
     unique, counts = np.unique(cluster_labels, return_counts=True)
+    unique_prompts = set()
     print("\n" + "="*80)
     print("CLUSTER ANALYSIS")
     print("="*80)
@@ -53,11 +54,22 @@ def cluster_prompts(prompts, url="microsoft/BiomedVLP-CXR-BERT-specialized", num
         max_display = min(10, len(cluster_indices))
         for i, idx in enumerate(cluster_indices[:max_display]):
             print(f"  {i+1:2d}. {prompts[idx]}")
-        
+            unique_prompts.add(prompts[idx])
+
         if len(cluster_indices) > max_display:
             print(f"  ... and {len(cluster_indices) - max_display} more samples")
         print()
-        
+    
+    list_unique_prompts = list(unique_prompts)
+    tokenizer_output = tokenizer.batch_encode_plus(batch_text_or_text_pairs=list_unique_prompts,
+                                               add_special_tokens=True,
+                                               padding='longest',
+                                               return_tensors='pt')
+    batch_embeddings = model.get_projected_text_embeddings(input_ids=tokenizer_output.input_ids,
+                                                 attention_mask=tokenizer_output.attention_mask)
+    sim = torch.mm(embeddings, embeddings.t())
+    print("Similarity matrix:", sim)
+
     # Create prototype space dictionary
     prototype_space = {
         'prototypes': prototype_centers,
